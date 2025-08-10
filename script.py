@@ -9,6 +9,7 @@ _summary_
 """
 
 import random
+from pathlib import Path
 from io import BytesIO
 import matplotlib.pyplot as plt
 from docx import Document
@@ -106,24 +107,16 @@ class GenerateDocxFile:
         doc = Document()
         doc.add_heading(f"Simulación de cactus con flor — {sim_label}", level=1)
         doc.add_paragraph(
-            """- Con la actualización Minecraft Java 1.21.5, se introdujo
-            el bloque de flor de cactus, que puede generarse sobre un cactus
-            como cuarto bloque, aunque de forma muy poco frecuente\n"""
+            "- Con la actualización Minecraft Java 1.21.5, se introdujo el bloque de flor de cactus, que puede generarse sobre un cactus como cuarto bloque, aunque de forma muy poco frecuente\n"
             "- La mecánica oficial documentada establece:\n"
-            """  - 10 % de probabilidad de flor cuando el cactus intenta
-            crecer de 1 a 2 bloques,\n"""
+            "  - 10 % de probabilidad de flor cuando el cactus intenta crecer de 1 a 2 bloques,\n"
             "  - 10 % nuevamente al intentar crecer a 3 bloques,\n"
-            """  - y finalmente 25 % cuando intenta crecer más allá
-            (sería el bloque 4, donde aparece la flor)\n"""
-            """- Por eso, sí es posible romper el récord de 23 bloques: si ya hay 23 bloques
-            de cactus, el siguiente intento puede generar la flor
-            y dejar un total de 24 bloques.\n"""
+            "  - y finalmente 25 % cuando intenta crecer más allá (sería el bloque 4, donde aparece la flor)\n"
+            "- Por eso, sí es posible romper el récord de 23 bloques: si ya hay 23 bloques de cactus, el siguiente intento puede generar la flor y dejar un total de 24 bloques.\n"
             "- Pero la probabilidad es mínima:\n"
             "  - Análisis teórico: ≈ 0.000642 (≈ 0.0642 %)\n"
-            """  - Simulación Monte-Carlo con 200 000 pruebas: ≈ 0.0715 %
-            (muy cercano al estimado)\n"""
-            """- La flor detiene el crecimiento; por lo tanto, es la única
-            forma de llegar a 24 — no permite seguir creciendo indefinidamente.\n"""
+            "  - Simulación Monte-Carlo con 200 000 pruebas: ≈ 0.0715 % (muy cercano al estimado)\n"
+            "- La flor detiene el crecimiento; por lo tanto, es la única forma de llegar a 24 — no permite seguir creciendo indefinidamente.\n"
         )
         img_buf = self.create_plot_image(
             height_data,
@@ -142,7 +135,11 @@ class GenerateDocxFile:
             "- La flor impide crecimiento adicional; es el único camino hacia 24 bloques."
         )
 
-        doc.save(output_path)
+        output_file = Path(output_path)
+        output_dir = output_file.parent
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        doc.save(str(output_file))
         print(f"Document generated: {output_path}")
 
     def build_docx_en(self, height_data: list[int], output_path: str, sim_label: str):
@@ -154,36 +151,29 @@ class GenerateDocxFile:
             output_path (str): Path where the Word document will be saved
             sim_label (str): Label to identify the simulation (e.g., "N = 200,000")
         """
+
         total_simulations = len(height_data)
-        print("total_simulations", total_simulations, "line 158")
+        # print("total_simulations", total_simulations, "line 158")
         count_24 = height_data.count(24)
-        print("count_24", count_24, "line 160")
+        # print("count_24", count_24, "line 160")
         sim_prob_24 = count_24 / total_simulations * 100
-        print("sim_prob_24", sim_prob_24, "line 162")
+        # print("sim_prob_24", sim_prob_24, "line 162")
         analytic_prob_24 = (0.9**2) * (0.75**20) * 100
-        print("analytic_prob_24s", analytic_prob_24, "line 164")
+        # print("analytic_prob_24s", analytic_prob_24, "line 164")
 
         doc = Document()
         doc.add_heading(f"Simulation of a flowering cactus — {sim_label}", level=1)
         doc.add_paragraph(
-            """- Minecraft Java 1.21.5 added the cactus flower block,
-            which can spawn atop a cactus as a fourth segment, though
-            exceedingly rare\n"""
+            "- Minecraft Java 1.21.5 added the cactus flower block, which can spawn atop a cactus as a fourth segment, though exceedingly rare\n"
             "- Game mechanics documented specify:\n"
-            """  - 10% chance for a flower when a cactus attempts
-            to grow from 1 to 2 blocks,\n"""
+            "  - 10% chance for a flower when a cactus attempts to grow from 1 to 2 blocks,\n"
             "  - another 10% when growing to 3 blocks,\n"
-            """  - then a final 25% chance when attempting to grow to
-            the next block (the 4th, where the flower appears)\n"""
-            """- Therefore, breaking the 23-block record is feasible:
-            if a cactus is already at 23 cactus-blocks, the next growth
-            can yield the flower and result in 24 total blocks.\n"""
+            "  - then a final 25% chance when attempting to grow to the next block (the 4th, where the flower appears)\n"
+            "- Therefore, breaking the 23-block record is feasible: if a cactus is already at 23 cactus-blocks, the next growth can yield the flower and result in 24 total blocks.\n"
             "- Yet the probability is extremely low:\n"
-            "  - Analytical estimate: ≈ 0.000642 (≈ 0.0642%)\n"
-            """  - Monte Carlo simulation (200 000 trials): ≈ 0.0715%,
-            very close to the theoretical estimate.\n"""
-            """- The flower stops further growth; thus, it's the sole
-            path to 24 — it doesn’t allow endless growth.\n"""
+            "    - Analytical estimate: ≈ 0.000642 (≈ 0.0642%)\n"
+            "    - Monte Carlo simulation (200 000 trials): ≈ 0.0715%, very close to the theoretical estimate.\n"
+            "- The flower stops further growth; thus, it's the sole path to 24 — it doesn’t allow endless growth.\n"
         )
         img_buf = self.create_plot_image(
             height_data,
@@ -201,7 +191,11 @@ class GenerateDocxFile:
             "- The flower stops further growth; it is the only route to reaching 24 blocks."
         )
 
-        doc.save(output_path)
+        output_file = Path(output_path)
+        output_dir = output_file.parent
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        doc.save(str(output_file))
         print(f"Document generated: {output_path}")
 
 
@@ -209,10 +203,10 @@ if __name__ == "__main__":
     for num_simul, label in [(200_000, "N = 200,000"), (1_000_000, "N = 1,000,000")]:
         heights = GenerateDocxFile().run_simulation(num_simul)
         FNAME_ES = (
-            f'/docs/simulacion_cactus_flor_{num_simul if num_simul<1e6 else "1M"}.docx'
+            f'docs/simulacion_cactus_flor_{num_simul if num_simul<1e6 else "1M"}.docx'
         )
         FNAME_EN = (
-            f'/docs/cactus_flor_simulation_{num_simul if num_simul<1e6 else "1M"}.docx'
+            f'docs/cactus_flor_simulation_{num_simul if num_simul<1e6 else "1M"}.docx'
         )
         GenerateDocxFile().build_docx_es(heights, FNAME_ES, label)
         GenerateDocxFile().build_docx_en(heights, FNAME_EN, label)
